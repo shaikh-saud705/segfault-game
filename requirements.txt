@@ -1,0 +1,7 @@
+# Segfault only needs pygame-ce. Everything else (sprites, sound, the
+# adaptive AI) is generated/implemented with the Python standard library.
+pygame-ce>=2.5.7
+
+# Optional: a local Ollama model (e.g. `ollama pull llama3.2`) makes the
+# Heuristic boss think with an LLM. Without it, the offline pattern-learning
+# AI runs the show — no internet, no cloud, nothing to install.

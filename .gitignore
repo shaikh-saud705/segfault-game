@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment (recreate with: python3 -m venv .venv && pip install -r requirements.txt)
+.venv/
+venv/
+
+# Save files / runtime
+.segfault/
+
+# Dev/test artifacts
+_shots/
+_*.png
+
+# Private Claude chat export (kept local only, not on GitHub)
+chat_export/
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
