@@ -30,8 +30,11 @@ class Game:
         self.running = True
 
         self.save_data = load_save()
-        self.sound = SoundManager(master=self.save_data.get("master_volume",
-                                                            0.5))
+        self.sound = SoundManager(
+            master=self.save_data.get("master_volume", 0.5),
+            music_volume=self.save_data.get("music_volume", 0.45),
+            music_on=self.save_data.get("music_on", True))
+        self.sound.play_music()
         self.bank = SpriteBank()
         self.use_llm = os.environ.get("SEGFAULT_NO_LLM") is None
         # background probe purely so the F3 overlay can report the TRUTH about
@@ -54,6 +57,8 @@ class Game:
 
     def write_save(self):
         self.save_data["master_volume"] = self.sound.master
+        self.save_data["music_volume"] = self.sound.music_volume
+        self.save_data["music_on"] = self.sound.music_on
         write_save(self.save_data)
 
     def quit(self):

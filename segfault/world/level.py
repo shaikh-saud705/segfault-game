@@ -28,6 +28,12 @@ class Level:
         self.wall_rects = []
         self.servers = []
         self.spawn = (C.WORLD_WIDTH // 2, C.WORLD_HEIGHT // 2)
+        # per-chapter themed tiles (built from the chapter's palette)
+        from ..sprites import floor_tile, wall_tile
+        self.floor_tile = floor_tile(chapter_cfg.get("floor", (26, 31, 58)),
+                                     chapter_cfg.get("floor_accent",
+                                                     (60, 90, 160)))
+        self.wall_tile = wall_tile(chapter_cfg.get("wall", (46, 52, 92)))
         self._generate()
 
     # -------------------------------------------------------- generation ----
@@ -105,8 +111,8 @@ class Level:
     # ------------------------------------------------------------- draw ----
     def draw(self, surface, cam):
         surface.fill(C.DARKER)
-        floor = self.bank.tiles["floor"]
-        wall = self.bank.tiles["wall"]
+        floor = self.floor_tile
+        wall = self.wall_tile
         t = C.TILE_SIZE
         ox, oy = cam
 

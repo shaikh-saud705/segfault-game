@@ -105,6 +105,59 @@ def hero(palette):
     return _finish(s)
 
 
+def hero_shogun():
+    """Anime samurai (Chapter 4 unlock): purple braided hair, white/lavender
+    kimono, gold-knot obi, glowing katana. Bespoke pixel art."""
+    s = _surf(14, 18)
+    skin = (245, 216, 196)
+    hair = (74, 50, 112)
+    hair_l = (122, 96, 184)
+    robe = (236, 234, 248)
+    robe_sh = (196, 188, 226)
+    sash = (132, 92, 200)
+    vest = (118, 40, 64)
+    gold = (245, 210, 90)
+    blade = (214, 184, 255)
+    sandal = (44, 40, 58)
+
+    # long side braid
+    for i, yy in enumerate(range(7, 18, 2)):
+        rrect(s, hair_l if i % 2 else hair, 11, yy, 2, 2)
+
+    # robe / kimono (long)
+    rrect(s, robe, 3, 8, 8, 9, 1)
+    rrect(s, robe_sh, 3, 8, 2, 9)              # left shade
+    rrect(s, robe_sh, 6, 13, 2, 4)             # skirt split
+    # wide sleeves
+    rrect(s, robe, 2, 9, 2, 4, 1)
+    rrect(s, robe, 10, 9, 2, 4, 1)
+    # maroon collar/vest
+    rrect(s, vest, 5, 8, 4, 2)
+    # obi sash + gold knot
+    rrect(s, sash, 3, 11, 8, 2)
+    rrect(s, gold, 6, 11, 2, 2)
+
+    # head + hair
+    rrect(s, skin, 4, 3, 6, 5, 1)
+    rrect(s, hair, 3, 1, 8, 3, 1)              # top
+    rrect(s, hair, 3, 3, 2, 5)                 # left bang to shoulder
+    rrect(s, hair, 9, 3, 2, 5)                 # right bang to shoulder
+    pygame.draw.rect(s, hair, (6, 2, 2, 1))    # centre bang
+    pygame.draw.rect(s, gold, (3, 1, 1, 1))    # hair ornament
+    # purple eyes
+    pygame.draw.rect(s, (158, 96, 220), (5, 5, 1, 1))
+    pygame.draw.rect(s, (158, 96, 220), (8, 5, 1, 1))
+
+    # glowing katana on the left
+    pygame.draw.line(s, (96, 74, 146), (3, 13), (1, 10), 1)   # hilt
+    pygame.draw.line(s, blade, (2, 11), (0, 6), 1)           # blade
+
+    # geta sandals
+    rrect(s, sandal, 4, 17, 2, 1)
+    rrect(s, sandal, 8, 17, 2, 1)
+    return _finish(s)
+
+
 # ----------------------------------------------------------------- enemies ----
 def enemy_bug(body, eye=(245, 210, 70)):
     """Chunky cyber-bug blob with glowing eyes and little legs."""
@@ -280,16 +333,15 @@ class SpriteBank:
             "pants": (24, 24, 32), "shoe": (200, 40, 40),
             "weapon": "sword",
         })
-        self.heroes["ironman"] = hero({
-            "skin": (235, 200, 170), "hair": (200, 40, 40),
-            "coat": (220, 50, 50), "coat_dark": (150, 30, 30),
-            "pants": (180, 140, 40), "shoe": (180, 140, 40),
-            "weapon": "blaster", "reactor": (120, 220, 255),
-        })
+        self.heroes["shogun"] = hero_shogun()
 
         self.enemies["null_pointer"] = enemy_bug((70, 220, 120))   # green bug
         self.enemies["spider"] = enemy_spider((245, 150, 60))
         self.enemies["tank"] = enemy_tank((70, 130, 240))
+        self.enemies["packet_sniffer"] = enemy_bug((60, 220, 230),
+                                                   eye=(245, 90, 200))  # cyan
+        self.enemies["dns_spoofer"] = enemy_bug((235, 80, 90),
+                                                eye=(245, 210, 70))     # red
         self.enemies["glitch"] = enemy_glitch()
         self.enemies["boss"] = boss_core()
 

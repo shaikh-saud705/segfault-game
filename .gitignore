@@ -23,3 +23,6 @@ Thumbs.db
 *.swp
 .idea/
 .vscode/
+
+# Reference images (local only)
+_ref/

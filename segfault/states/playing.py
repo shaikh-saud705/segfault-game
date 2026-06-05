@@ -272,6 +272,10 @@ class PlayingState(State):
         x, y = self.level.random_spawn_point(self.player, min_dist=300)
         self.boss = Enemy(x, y, "heuristic", profile=self.profile,
                           use_llm=self.game.use_llm)
+        # scale boss HP per chapter
+        self.boss.max_hp = self.cfg.get("boss_hp", self.boss.max_hp)
+        self.boss.hp = self.boss.max_hp
+        self.boss.boss_name = self.cfg.get("boss_name", "THE HEURISTIC")
         self.enemies.append(self.boss)
         self.sound.play("boss", 0.9)
         self._burst(x, y, C.PINK, 30)
@@ -376,7 +380,8 @@ class PlayingState(State):
                 by = s.rect.top - cam[1] - 26
                 blink = (pygame.time.get_ticks() // 350) % 2 == 0
                 if blink:
-                    draw_text(surface, "[E] PATCH", 18, bx, by,
+                    action = self.cfg.get("action", "PATCH")
+                    draw_text(surface, f"[E] {action}", 18, bx, by,
                               color=C.YELLOW, center=True, bold=True)
 
     def _draw_hud(self, surface):
@@ -397,10 +402,12 @@ class PlayingState(State):
         # objective / kills (top)
         if self.phase in ("intro", "patching"):
             done = sum(1 for s in self.level.servers if s.patched)
-            obj = f"PATCH SERVERS  {done}/{len(self.level.servers)}"
+            action = self.cfg.get("action", "PATCH")
+            noun = self.cfg.get("objective_noun", "SERVERS")
+            obj = f"{action} {noun}  {done}/{len(self.level.servers)}"
             color = C.YELLOW
         elif self.phase in ("boss_intro", "boss"):
-            obj = "DEFEAT THE HEURISTIC"
+            obj = "DEFEAT " + self.cfg.get("boss_name", "THE HEURISTIC")
             color = C.PINK
         else:
             obj = "CHAPTER STABILISED"

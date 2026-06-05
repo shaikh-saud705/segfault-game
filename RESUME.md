@@ -6,8 +6,11 @@ Where the project stands and what's left. Pick any "next" and we go.
 
 - **Engine + clean structure** — pygame-ce, state machine, `python3 run.py` just works
 - **Zero-asset pipeline** — every sprite + sound generated in code (no downloads)
+- **Pixel font everywhere** — whole UI uses an in-code pixel bitmap font
+- **Logo / icon** — retro-computer artwork (`assets/title.png`) as the window icon
 - **Main menu** — New Game / Continue / Quit, animated code-rain bg, glitch title
-- **Character select** — The Dev playable; Anime + Stark in, unlock-gated; stat bars
+- **Character select** — 3 heroes, all sprites done, unlock-gated, stat bars:
+  The Dev (start) · The Anime (Ch2) · The Shogun – anime samurai (Ch4)
 - **Save system** — JSON in `~/.segfault` (kills, deaths, progress, volume, playtime)
 - **Chapter 1: LOCALHOST** — fully playable start → finish
 - **Combat feel** — WASD move, mouse aim, melee swing arc, ranged + projectile trails,
@@ -19,31 +22,40 @@ Where the project stands and what's left. Pick any "next" and we go.
 - **Lessons** — typewriter dev-concept popups
 - **Pause / Game Over / Victory** screens
 - **HUD + minimap + camera** (deadzone follow)
+- **F3 debug overlay** — FPS, frame time, entity counts, live AI state, real Ollama status
+- **Backed up on GitHub** (private): github.com/shaikh-saud705/segfault-game
+
+## ✅ DONE (polish + content)
+
+- **Options screen** — master vol, music vol, music on/off; in main menu + pause; saved
+- **Background music** — procedural synthwave loop (built in code, off-thread at startup)
+- **All 3 heroes** unlocked + headless-playtested through the boss (Dev/Anime/Shogun)
+- **Enemy variety** — Packet Sniffer (leech), DNS Spoofer (blink), Hallucination (erratic),
+  tank — coded and wired into each chapter's roster
+- **⭐ ALL 5 CHAPTERS PLAYABLE** start→finish, each with its own theme/colours, lessons
+  (TCP handshake, DNS, how LLMs train, prompt injection), enemies, and a named boss:
+  Heuristic → Man-in-the-Middle → Rogue Root Server → Untrained Model → The Architect
+- **Chapter progression** — Victory screen → NEXT CHAPTER → character select → next chapter;
+  final ending after Ch5. Verified by an automated full-game playthrough.
+- **Per-character weapon sounds** — pistol (Dev), plasma (Shogun/Anime); repulsor / blaster /
+  beep synthesised and ready for the incoming hero roster
 
 ## 🔜 REMAINING (the resume list)
 
 ### Big stuff
-1. **Chapters 2–5** — currently scaffolded + locked stubs. Each needs a level layout,
-   a new enemy, lesson content, and a boss:
-   - Ch2 TCP HANDSHAKE — enemy: Packet Sniffer (drains HP on contact)
-   - Ch3 DNS LABYRINTH — enemy: DNS Spoofer (spawns fake clones of you)
-   - Ch4 TRAINING DATA — enemy: Hallucination (random movement)
-   - Ch5 PROMPT INJECTION — the LLM-powered final boss (full payoff)
-2. **Weapon system** — right now weapons are baked into each hero. Original design wanted
-   unlockable weapons (shotgun, sword, plasma…) + a weapon-select grid.
-
-### Medium
-3. **Options screen** — volume sliders / settings UI (volume is saved, just no UI yet)
-4. **Tank enemy into Ch1 rotation** — it's coded but not spawned yet
-5. **Background music** — only SFX right now
-6. **Balance + test Anime & Stark** — only The Dev is thoroughly tuned
+1. **Hero roster expansion** — Iron Man, Ultron, Big Hero (Baymax), Bumblebee, Wall-E as
+   original pixel sprites, each tied to a chapter unlock, with their weapon + sound
+   (repulsor/blaster/beep already made). NEXT UP.
+2. **Weapon system** — weapons are baked into each hero; original design wanted unlockable
+   weapons (shotgun, sword, plasma…) + a weapon-select grid.
 
 ### Polish / nice-to-have
-7. Screen shake + hit-stop on big hits
-8. Persist the AI's "learned profile" across runs (so the boss remembers you next session)
-9. Custom hand-drawn pixel art to replace procedural sprites (v2 — code already supports a swap)
-10. More enemy variety / difficulty scaling per wave
+3. Screen shake + hit-stop on big hits
+4. Persist the AI's "learned profile" across runs (boss remembers you next session)
+5. Custom hand-drawn pixel art to replace procedural sprites (code already supports the swap)
+6. Re-enable chapter-gating for heroes once chapters 2–4 exist (flag `UNLOCK_ALL` in
+   `data/characters.py`)
 
 ## Suggested next step
-**Chapter 2 (TCP Handshake)** — it reuses everything we built, so it's the fastest way to
-make the game visibly *bigger*. Or the **weapon system** if you want combat variety first.
+**Chapter 2 (TCP Handshake)** — reuses everything we built (incl. the Packet Sniffer enemy
+that's already coded), so it's the fastest way to make the game visibly *bigger*.

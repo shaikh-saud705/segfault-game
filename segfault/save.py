@@ -14,6 +14,8 @@ DEFAULTS = {
     "deaths": 0,
     "playtime": 0.0,
     "master_volume": 0.5,
+    "music_volume": 0.45,
+    "music_on": True,
     "seen_intro": False,
 }
 

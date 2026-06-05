@@ -157,7 +157,7 @@ class Player:
         muzzle = (self.x + nx * 24, self.y + ny * 8)
         projectiles.append(Projectile(muzzle[0], muzzle[1], nx, ny,
                                       True, self.ranged_dmg))
-        sound.play("shoot", 0.5)
+        sound.play(self.char.get("shoot_sound", "shoot"), 0.5)
         return True
 
     def take_damage(self, amount, sound):

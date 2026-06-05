@@ -223,7 +223,7 @@ class AdaptiveBrain:
     THINK_INTERVAL = 1.6               # seconds between re-decisions
 
     def __init__(self, profile, use_llm=True):
-        self.profile = profile
+        self.profile = profile if profile is not None else PlayerProfile()
         self.strategy = "flank"
         self.taunt = None
         self.source = "boot"

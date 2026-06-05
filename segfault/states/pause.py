@@ -9,7 +9,7 @@ from .base import State
 class PauseState(State):
     transparent = True
 
-    OPTIONS = ["RESUME", "RESTART CHAPTER", "QUIT TO MENU"]
+    OPTIONS = ["RESUME", "OPTIONS", "RESTART CHAPTER", "QUIT TO MENU"]
 
     def __init__(self, game):
         super().__init__(game)
@@ -34,6 +34,9 @@ class PauseState(State):
         choice = self.OPTIONS[self.index]
         if choice == "RESUME":
             self.pop()
+        elif choice == "OPTIONS":
+            from .options import OptionsState
+            OptionsState(self.game).enter()
         elif choice == "RESTART CHAPTER":
             from .playing import PlayingState
             playing = self.game.state_below(self)

@@ -12,6 +12,7 @@ CHARACTERS = [
         "melee_dmg": 25,
         "ranged_dmg": 15,
         "weapon": "Laptop / Pistol",
+        "shoot_sound": "pistol",
         "unlock": None,                  # available from the start
     },
     {
@@ -25,19 +26,21 @@ CHARACTERS = [
         "melee_dmg": 38,
         "ranged_dmg": 0,                 # no projectile
         "weapon": "Energy Blade",
+        "shoot_sound": "plasma",
         "unlock": 2,                     # unlocks after clearing chapter 2
     },
     {
-        "id": "ironman",
-        "name": "THE STARK",
-        "role": "Tank / Ranged",
-        "sprite": "ironman",
-        "blurb": "Slow, armoured, hits from range. Runs on a tiny reactor.",
-        "hp": 160,
-        "speed": 200,
-        "melee_dmg": 18,
-        "ranged_dmg": 30,
-        "weapon": "Repulsor",
+        "id": "shogun",
+        "name": "THE SHOGUN",
+        "role": "Kensei / Samurai",
+        "sprite": "shogun",
+        "blurb": "Purple-haired swordmaster. Katana up close, plasma slash at range.",
+        "hp": 95,
+        "speed": 320,
+        "melee_dmg": 34,
+        "ranged_dmg": 18,
+        "weapon": "Plasma Katana",
+        "shoot_sound": "plasma",
         "unlock": 4,                     # unlocks after clearing chapter 4
     },
 ]
@@ -49,7 +52,15 @@ def get_character(cid):
     return BY_ID.get(cid, CHARACTERS[0])
 
 
+# Chapters 2-5 aren't built yet, so chapter-gating would make Anime/Shogun
+# permanently unreachable. Until those chapters ship, all heroes are available.
+# Flip this to False to re-enable the "unlock by clearing chapter N" gating.
+UNLOCK_ALL = True
+
+
 def is_unlocked(character, highest_chapter, unlocked_list):
+    if UNLOCK_ALL:
+        return True
     if character["id"] in unlocked_list:
         return True
     req = character["unlock"]

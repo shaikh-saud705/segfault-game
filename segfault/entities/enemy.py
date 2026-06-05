@@ -15,6 +15,15 @@ ENEMY_TYPES = {
                      "size": 38},
     "tank":         {"hp": 110, "speed": 70, "dmg": 16, "sprite": "tank",
                      "size": 52},
+    # Chapter 2+: drains (heals itself) on contact
+    "packet_sniffer": {"hp": 40, "speed": 150, "dmg": 7, "sprite": "packet_sniffer",
+                       "size": 38},
+    # Chapter 3+: blinks/teleports around you like a spoofed address
+    "dns_spoofer":  {"hp": 55, "speed": 130, "dmg": 10, "sprite": "dns_spoofer",
+                     "size": 42},
+    # Chapter 4+: moves in random, unpredictable bursts
+    "hallucination": {"hp": 30, "speed": 150, "dmg": 8, "sprite": "glitch",
+                      "size": 42},
     "heuristic":    {"hp": 220, "speed": 175, "dmg": 14, "sprite": "glitch",
                      "size": 50},
 }
@@ -48,7 +57,14 @@ class Enemy:
         # ai state
         self.phase = random.uniform(0, math.tau)
         self.ai_t = 0.0
+        self.ai_dir = (0.0, 0.0)
         self.lunge_t = 0.0
+        self.blink_t = random.uniform(1.5, 2.5)
+
+        # special behaviours
+        self.is_leech = (type_name == "packet_sniffer")
+        self.is_blinker = (type_name == "dns_spoofer")
+        self.is_random = (type_name == "hallucination")
 
         self.is_adaptive = (type_name == "heuristic")
         self.brain = AdaptiveBrain(profile, use_llm=use_llm) \
@@ -88,6 +104,23 @@ class Enemy:
             self.kb_y *= 0.86
             return
 
+        # DNS spoofer: blink to a fresh spot near the player now and then
+        if self.is_blinker:
+            self.blink_t -= dt
+            if self.blink_t <= 0:
+                self.blink_t = random.uniform(1.8, 2.8)
+                ang = random.uniform(0, math.tau)
+                r = random.uniform(130, 210)
+                tx = player.x + math.cos(ang) * r
+                ty = player.y + math.sin(ang) * r
+                probe = pygame.Rect(0, 0, self.rect.width, self.rect.height)
+                probe.center = (int(tx), int(ty))
+                tx = clamp(tx, self.radius, C.WORLD_WIDTH - self.radius)
+                ty = clamp(ty, self.radius, C.WORLD_HEIGHT - self.radius)
+                if not any(probe.colliderect(rr) for rr in solid_rects):
+                    self.x, self.y = tx, ty
+                    self.rect.center = (int(tx), int(ty))
+
         if self.brain:
             self.brain.update(dt)
             if self.taunt_timer > 0:
@@ -106,7 +139,9 @@ class Enemy:
 
         # contact damage
         if self.rect.colliderect(player.rect) and self.contact_cd <= 0:
-            player.take_damage(self.damage, sound)
+            hit = player.take_damage(self.damage, sound)
+            if hit and self.is_leech:          # packet sniffer heals itself
+                self.hp = min(self.max_hp, self.hp + self.damage)
             self.contact_cd = C.ENEMY_CONTACT_COOLDOWN
 
     def _basic_move(self, dt, player):
@@ -116,6 +151,14 @@ class Enemy:
             self.phase += dt * 9
             perp = math.sin(self.phase)
             nx, ny = normalize(nx * 1.4 - ny * perp, ny * 1.4 + nx * perp)
+        elif self.is_random:                   # hallucination: erratic bursts
+            self.ai_t -= dt
+            if self.ai_t <= 0:
+                self.ai_t = random.uniform(0.3, 0.5)
+                # mostly toward the player, but jittered hard
+                ang = math.atan2(dy, dx) + random.uniform(-2.2, 2.2)
+                self.ai_dir = (math.cos(ang), math.sin(ang))
+            nx, ny = self.ai_dir
         return nx * self.speed, ny * self.speed
 
     def _adaptive_move(self, dt, player):

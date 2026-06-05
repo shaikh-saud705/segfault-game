@@ -21,8 +21,13 @@ class MenuState(State):
         self.options.append(("NEW GAME", self._new_game))
         if has_progress:
             self.options.append(("CONTINUE", self._continue))
+        self.options.append(("OPTIONS", self._open_options))
         self.options.append(("QUIT", self.game.quit))
         self.index = 1 if has_progress else 0
+
+    def _open_options(self):
+        from .options import OptionsState
+        OptionsState(self.game).enter()
 
     def on_resume(self):
         self.rain.resize(*self.game.size)
