@@ -11,38 +11,63 @@ from .base import State
 
 
 class CharacterSelectState(State):
+    """Carousel: a big focused card for the selected hero + a strip of all
+    heroes below. Scales cleanly to the full 8-hero roster."""
+
     def __init__(self, game):
         super().__init__(game)
         self.t = 0.0
         self.index = 0
         self.message = ""
         self.message_t = 0.0
+        # start on the first unlocked hero
+        for i, c in enumerate(CHARACTERS):
+            if self._unlocked(c):
+                self.index = i
+                break
 
     def _unlocked(self, char):
         return is_unlocked(char, self.save["highest_chapter"],
                            self.save["unlocked_characters"])
 
+    @staticmethod
+    def _wrap(text, max_chars):
+        lines, cur = [], ""
+        for word in text.split():
+            if len(cur) + len(word) + 1 <= max_chars:
+                cur = (cur + " " + word).strip()
+            else:
+                lines.append(cur)
+                cur = word
+        if cur:
+            lines.append(cur)
+        return lines
+
     # ------------------------------------------------------------ events ----
     def handle_events(self, events):
         for e in events:
-            if e.type == pygame.KEYDOWN:
-                if e.key in (pygame.K_LEFT, pygame.K_a):
-                    self.index = (self.index - 1) % len(CHARACTERS)
-                    self.sound.play("select", 0.5)
-                elif e.key in (pygame.K_RIGHT, pygame.K_d):
-                    self.index = (self.index + 1) % len(CHARACTERS)
-                    self.sound.play("select", 0.5)
-                elif e.key in (pygame.K_RETURN, pygame.K_SPACE):
-                    self._choose()
-                elif e.key == pygame.K_ESCAPE:
-                    self.sound.play("select", 0.5)
-                    self.pop()
+            if e.type != pygame.KEYDOWN:
+                continue
+            if e.key in (pygame.K_LEFT, pygame.K_a):
+                self.index = (self.index - 1) % len(CHARACTERS)
+                self.sound.play("select", 0.5)
+            elif e.key in (pygame.K_RIGHT, pygame.K_d):
+                self.index = (self.index + 1) % len(CHARACTERS)
+                self.sound.play("select", 0.5)
+            elif e.key in (pygame.K_RETURN, pygame.K_SPACE):
+                self._choose()
+            elif e.key == pygame.K_TAB:
+                from .weapon_select import WeaponSelectState
+                self.sound.play("select", 0.5)
+                WeaponSelectState(self.game).enter()
+            elif e.key == pygame.K_ESCAPE:
+                self.sound.play("select", 0.5)
+                self.pop()
 
     def _choose(self):
         char = CHARACTERS[self.index]
         if not self._unlocked(char):
-            req = char["unlock"]
-            self.message = f"LOCKED — clear Chapter {req} to unlock"
+            self.message = f"LOCKED — clear Chapter {char['unlock']} to unlock"
             self.message_t = 2.5
             self.sound.play("hurt", 0.5)
             return
@@ -57,7 +82,6 @@ class CharacterSelectState(State):
         from .playing import PlayingState
         self.game.set_state(PlayingState(self.game, char, cfg))
 
-    # ------------------------------------------------------------ update ----
     def update(self, dt, events):
         self.t += dt
         if self.message_t > 0:
@@ -67,72 +91,105 @@ class CharacterSelectState(State):
     def draw(self, surface):
         surface.fill(C.DARKER)
         w, h = surface.get_size()
-        draw_text(surface, "SELECT YOUR DEV", 40, w // 2, 56,
+        draw_text(surface, "SELECT YOUR HERO", 38, w // 2, 44,
                   color=C.WHITE, center=True, bold=True)
         chap = get_chapter(self.save["current_chapter"])
-        sub = chap["subtitle"] if chap else ""
-        draw_text(surface, sub, 18, w // 2, 92, color=C.CYAN, center=True)
+        if chap:
+            draw_text(surface, chap["subtitle"], 16, w // 2, 76,
+                      color=C.CYAN, center=True)
 
-        n = len(CHARACTERS)
-        cw = min(280, (w - 80) // n)
-        gap = 24
-        total = n * cw + (n - 1) * gap
-        x0 = (w - total) // 2
-        cy = h // 2 + 10
-        ch = 320
-
-        for i, char in enumerate(CHARACTERS):
-            cx = x0 + i * (cw + gap)
-            rect = pygame.Rect(cx, cy - ch // 2, cw, ch)
-            self._draw_card(surface, rect, char, i == self.index)
+        self._draw_card(surface, CHARACTERS[self.index])
+        self._draw_strip(surface)
 
         if self.message_t > 0:
-            draw_text(surface, self.message, 22, w // 2, h - 70,
+            draw_text(surface, self.message, 20, w // 2, h - 84,
                       color=C.RED, center=True, bold=True)
+        from ..data.weapons import get_weapon
+        wid = self.save.get("equipped_weapon", "signature")
+        wname = (get_weapon(wid) or {}).get("name", "SIGNATURE")
+        draw_text(surface, f"[TAB] ARMORY  (equipped: {wname})", 15,
+                  w // 2, h - 52, color=C.YELLOW, center=True)
         draw_text(surface, "[A/D] browse   [ENTER] deploy   [ESC] back",
-                  16, w // 2, h - 30, color=C.GREY, center=True)
+                  16, w // 2, h - 28, color=C.GREY, center=True)
 
-    def _draw_card(self, surface, rect, char, selected):
+    def _draw_card(self, surface, char):
+        w, h = surface.get_size()
         unlocked = self._unlocked(char)
-        border = C.CYAN if selected else C.UI_BORDER
-        fill = (24, 28, 44) if selected else C.UI_PANEL
-        panel(surface, rect, fill=fill, border=border,
-              alpha=255 if selected else 210)
-        if selected:
-            pygame.draw.rect(surface, C.CYAN, rect, 3, border_radius=6)
+        cw, ch = min(660, w - 80), 270
+        rect = pygame.Rect((w - cw) // 2, 100, cw, ch)
+        panel(surface, rect, fill=(22, 26, 40), border=C.CYAN)
 
-        cx = rect.centerx
-        # sprite (bobbing)
+        # left: big bobbing sprite
         spr = self.bank.heroes[char["sprite"]]
-        spr = pygame.transform.scale(spr, (spr.get_width() * 2,
-                                           spr.get_height() * 2))
-        bob = math.sin(self.t * 3 + rect.x) * 4 if selected else 0
-        srect = spr.get_rect(center=(cx, rect.top + 80 + bob))
-        surface.blit(spr, srect)
+        spr = pygame.transform.scale(spr, (spr.get_width() * 3,
+                                           spr.get_height() * 3))
+        bob = math.sin(self.t * 3) * 5
+        sx = rect.left + 110
+        surface.blit(spr, spr.get_rect(center=(sx, rect.centery + bob)))
+
+        # right: details
+        tx = rect.left + 230
+        draw_text(surface, char["name"], 30, tx, rect.top + 24,
+                  color=C.WHITE, bold=True)
+        draw_text(surface, char["role"], 15, tx, rect.top + 58, color=C.CYAN)
+
+        # blurb, wrapped to fit the card
+        max_chars = max(10, (rect.right - tx - 16) // 12)
+        y = rect.top + 80
+        for line in self._wrap(char["blurb"], max_chars)[:2]:
+            draw_text(surface, line, 13, tx, y, color=C.GREY)
+            y += 18
+        y += 4
+        draw_text(surface, "GUN:  " + char["weapon"], 14, tx, y,
+                  color=C.YELLOW)
+        ab = char.get("ability", {})
+        draw_text(surface, "[Q]:  " + ab.get("name", "-"), 14, tx, y + 20,
+                  color=C.PINK)
+
+        stats = [("HP", char["hp"], 220), ("SPD", char["speed"], 360),
+                 ("MEL", char["melee_dmg"], 40), ("RNG", char["ranged_dmg"], 40)]
+        by = y + 46
+        for label, val, mx in stats:
+            draw_text(surface, label, 13, tx, by, color=C.GREY)
+            draw_bar(surface, tx + 52, by + 1, rect.right - tx - 76, 9,
+                     val / mx, (40, 44, 60), C.GREEN)
+            by += 22
 
         if not unlocked:
-            # cover the card detail and show only the lock state - no overlap
             ov = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA)
-            ov.fill((6, 8, 14, 225))
+            ov.fill((6, 8, 14, 205))
             surface.blit(ov, rect.topleft)
-            draw_text(surface, "LOCKED", 26, cx, rect.centery + 20,
-                      color=C.RED, center=True)
-            draw_text(surface, f"CLEAR CH.{char['unlock']}", 15, cx,
-                      rect.centery + 50, color=C.GREY, center=True)
-            return
+            draw_text(surface, "LOCKED", 34, rect.centerx, rect.centery - 14,
+                      color=C.RED, center=True, bold=True)
+            draw_text(surface, f"CLEAR CHAPTER {char['unlock']}", 16,
+                      rect.centerx, rect.centery + 20, color=C.GREY,
+                      center=True)
 
-        draw_text(surface, char["name"], 24, cx, rect.top + 150,
-                  color=C.WHITE, center=True, bold=True)
-        draw_text(surface, char["role"], 15, cx, rect.top + 176,
-                  color=C.CYAN, center=True)
-
-        # stat bars
-        stats = [("HP", char["hp"], 200), ("SPD", char["speed"], 400),
-                 ("MEL", char["melee_dmg"], 40), ("RNG", char["ranged_dmg"], 40)]
-        by = rect.top + 200
-        bw = rect.width - 84
-        for label, val, mx in stats:
-            draw_text(surface, label, 13, rect.left + 16, by, color=C.GREY)
-            draw_bar(surface, rect.left + 60, by + 1, bw, 9, val / mx,
-                     (40, 44, 60), C.GREEN)
-            by += 18
+    def _draw_strip(self, surface):
+        w, h = surface.get_size()
+        n = len(CHARACTERS)
+        box = 60
+        gap = 10
+        total = n * box + (n - 1) * gap
+        x0 = (w - total) // 2
+        y = h - 150
+        for i, char in enumerate(CHARACTERS):
+            bx = x0 + i * (box + gap)
+            r = pygame.Rect(bx, y, box, box)
+            sel = (i == self.index)
+            unlocked = self._unlocked(char)
+            pygame.draw.rect(surface, (20, 24, 36), r, border_radius=5)
+            spr = self.bank.heroes[char["sprite"]]
+            spr = pygame.transform.scale(spr, (int(spr.get_width() * 0.9),
+                                               int(spr.get_height() * 0.9)))
+            srect = spr.get_rect(center=r.center)
+            surface.blit(spr, srect)
+            if not unlocked:
+                ov = pygame.Surface((box, box), pygame.SRCALPHA)
+                ov.fill((6, 8, 14, 190))
+                surface.blit(ov, r.topleft)
+                draw_text(surface, str(char["unlock"]), 18, r.centerx,
+                          r.centery, color=C.RED, center=True, bold=True)
+            border = C.CYAN if sel else C.UI_BORDER
+            pygame.draw.rect(surface, border, r, 3 if sel else 1,
+                             border_radius=5)

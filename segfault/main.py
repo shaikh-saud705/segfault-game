@@ -46,9 +46,13 @@ class Game:
 
         self.stack = []
         self.debug = False                 # F3 toggles the debug overlay
+        self.hitstop_t = 0.0               # brief freeze on big impacts
 
         from .states.menu import MenuState
         self.set_state(MenuState(self))
+
+    def hitstop(self, dur):
+        self.hitstop_t = max(self.hitstop_t, dur)
 
     # ----------------------------------------------------------- helpers ----
     @property
@@ -163,7 +167,10 @@ class Game:
             if self.stack:
                 top = self.stack[-1]
                 top.handle_events(events)
-                top.update(dt, events)
+                if self.hitstop_t > 0:
+                    self.hitstop_t -= dt      # freeze gameplay briefly
+                else:
+                    top.update(dt, events)
             else:
                 self.running = False
 

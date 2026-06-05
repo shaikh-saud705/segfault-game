@@ -40,21 +40,35 @@ Where the project stands and what's left. Pick any "next" and we go.
 - **Per-character weapon sounds** — pistol (Dev), plasma (Shogun/Anime); repulsor / blaster /
   beep synthesised and ready for the incoming hero roster
 
-## 🔜 REMAINING (the resume list)
+## ✅ DONE — full 8-hero roster
 
-### Big stuff
-1. **Hero roster expansion** — Iron Man, Ultron, Big Hero (Baymax), Bumblebee, Wall-E as
-   original pixel sprites, each tied to a chapter unlock, with their weapon + sound
-   (repulsor/blaster/beep already made). NEXT UP.
-2. **Weapon system** — weapons are baked into each hero; original design wanted unlockable
-   weapons (shotgun, sword, plasma…) + a weapon-select grid.
+- **8 heroes**, chapter-gated unlocks (clear a chapter to unlock the next hero):
+  Dev (start) · Anime (Ch1) · Shogun (Ch2) · Iron Man + Ultron (Ch3) ·
+  Baymax + Bumblebee (Ch4) · Wall-E (Ch5)
+- Each has **original pixel art**, its own **gun sound**, and a **special ability** on [Q]:
+  Hotfix (heal) · Omni-Slash/Musou/Compactor (nova AoE) · Repulsor Volley/Drone Swarm
+  (barrage) · Guardian Shield (invuln) · Overdrive (speed+fire-rate buff)
+- New **carousel character-select** UI (big card + thumbnail strip) scales to all 8
 
-### Polish / nice-to-have
-3. Screen shake + hit-stop on big hits
-4. Persist the AI's "learned profile" across runs (boss remembers you next session)
-5. Custom hand-drawn pixel art to replace procedural sprites (code already supports the swap)
-6. Re-enable chapter-gating for heroes once chapters 2–4 exist (flag `UNLOCK_ALL` in
-   `data/characters.py`)
+## ✅ DONE — the "optional" polish pass (all of it)
+
+- **Weapon system + Armory** — 6 ranged weapons (pistol/SMG/shotgun/plasma/pulse/beam),
+  chapter-unlocked, equipped in the [TAB] Armory; damage scales per hero; melee-only heroes
+  stay melee. Shotgun = 5 pellets, pulse = 3-round burst, etc.
+- **Juice** — screen shake on hits/death/boss-kill/nova + brief hit-stop on big impacts
+- **AI memory across sessions** — the boss's profile of how you fight is saved to disk and
+  re-loaded, so it starts each run already knowing your habits
+- **Every sprite is now bespoke** — Dev + Anime redrawn; Iron Man/Ultron/Bumblebee redrawn
+  to actually look like themselves; enemies are proper cyborgs; boss has its own big sprite
+
+## 🟢 The game is feature-complete.
+
+Anything from here is content/extras, not gaps:
+- More chapters / enemies / heroes
+- Melee weapon variety (currently ranged-only weapon swaps)
+- Boss-specific attack patterns per chapter
+- Custom hand-drawn art if you ever want to replace the procedural sprites
+  (`UNLOCK_ALL` in `data/characters.py` re-enables strict gating if needed)
 
 ## Suggested next step
 **Chapter 2 (TCP Handshake)** — reuses everything we built (incl. the Packet Sniffer enemy

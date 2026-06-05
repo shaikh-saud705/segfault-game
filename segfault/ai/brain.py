@@ -102,6 +102,30 @@ class PlayerProfile:
             "retreats_at_low_hp": self.retreat_low_hp,
         }
 
+    # ---- persistence (so the AI remembers you across sessions) -----------
+    def to_dict(self):
+        return {
+            "melee": self.melee_count, "ranged": self.ranged_count,
+            "dodge": self.dodge_count, "dodge_left": self.dodge_left,
+            "dodge_right": self.dodge_right, "hits": self.hits_taken,
+            "retreat": self.retreat_low_hp, "dist_sum": self._dist_sum,
+            "dist_n": self._dist_n, "kills": self.kills,
+        }
+
+    def load_dict(self, d):
+        if not d:
+            return
+        self.melee_count = d.get("melee", 0)
+        self.ranged_count = d.get("ranged", 0)
+        self.dodge_count = d.get("dodge", 0)
+        self.dodge_left = d.get("dodge_left", 0)
+        self.dodge_right = d.get("dodge_right", 0)
+        self.hits_taken = d.get("hits", 0)
+        self.retreat_low_hp = d.get("retreat", 0)
+        self._dist_sum = d.get("dist_sum", 0.0)
+        self._dist_n = d.get("dist_n", 0)
+        self.kills = d.get("kills", 0)
+
 
 # ===================================================== offline strategist ==
 def heuristic_strategy(profile):

@@ -51,8 +51,12 @@ class PlayingState(State):
         self.bank_ref = game.bank
 
         self.level = Level(cfg, game.bank)
-        self.player = Player(*self.level.spawn, char)
+        from ..data.weapons import get_weapon
+        weapon = get_weapon(game.save_data.get("equipped_weapon", "signature"))
+        self.player = Player(*self.level.spawn, char, weapon=weapon)
         self.profile = PlayerProfile()
+        # the boss remembers how you've fought in past sessions
+        self.profile.load_dict(game.save_data.get("ai_memory") or {})
         view = game.screen.get_size()
         self.camera = Camera(*view)
         self.camera.snap_to(self.player.x, self.player.y)
@@ -60,6 +64,8 @@ class PlayingState(State):
         self.enemies = []
         self.projectiles = []
         self.particles = []
+        self.rings = []          # expanding ability-effect rings
+        self._last_hp = self.player.hp
 
         self.kills = 0
         self.spawn_timer = cfg.get("spawn_interval", 2.2)
@@ -100,6 +106,29 @@ class PlayingState(State):
                                pygame.K_RSHIFT):
                     self.player.try_dodge(pygame.key.get_pressed(),
                                           self.profile, self.sound)
+                elif e.key == pygame.K_q:
+                    self._use_ability()
+
+    def _use_ability(self):
+        res = self.player.try_ability(self.enemies, self.projectiles,
+                                      self.sound)
+        if not res:
+            return
+        kind = res["type"]
+        if kind == "nova":
+            self.camera.add_shake(10)
+            self.game.hitstop(0.05)
+        if kind in ("nova", "hotfix"):
+            self._burst(res["x"], res["y"], res["color"], 32)
+            self.rings.append([res["x"], res["y"], 12.0, res.get("r", 120),
+                               0.45, res["color"]])
+        elif kind == "shield":
+            self.rings.append([res["x"], res["y"], 12.0, 52.0, 0.4,
+                               (140, 210, 255)])
+        elif kind == "overdrive":
+            self._burst(res["x"], res["y"], C.YELLOW, 24)
+        elif kind == "barrage":
+            self._burst(self.player.x, self.player.y, C.CYAN, 10)
 
     # -------------------------------------------------------------- update ----
     def update(self, dt, events):
@@ -133,6 +162,9 @@ class PlayingState(State):
             p.update(dt, self.level.solid_rects)
         for pa in self.particles:
             pa.update(dt)
+        for ring in self.rings:                  # [x, y, r, max_r, life, color]
+            ring[4] -= dt
+            ring[2] += (ring[3] - ring[2]) * min(1.0, dt * 9)
 
         self._resolve_hits()
         self._observe_profile()
@@ -141,6 +173,12 @@ class PlayingState(State):
         self.enemies = [e for e in self.enemies if e.alive]
         self.projectiles = [p for p in self.projectiles if p.active]
         self.particles = [p for p in self.particles if p.life > 0]
+        self.rings = [r for r in self.rings if r[4] > 0]
+
+        # screen shake when the player takes a hit
+        if self.player.hp < self._last_hp:
+            self.camera.add_shake(7)
+        self._last_hp = self.player.hp
 
         self.camera.update(self.player.x, self.player.y)
 
@@ -224,6 +262,10 @@ class PlayingState(State):
         self._burst(e.x, e.y, col, 26)
         if e.is_adaptive:
             self.sound.play("boss", 0.8)
+            self.camera.add_shake(16)          # boss death = big juice
+            self.game.hitstop(0.14)
+        else:
+            self.camera.add_shake(3)
 
     def _observe_profile(self):
         if not self.enemies:
@@ -280,7 +322,11 @@ class PlayingState(State):
         self.sound.play("boss", 0.9)
         self._burst(x, y, C.PINK, 30)
 
+    def _persist_ai_memory(self):
+        self.game.save_data["ai_memory"] = self.profile.to_dict()
+
     def _finish_chapter(self):
+        self._persist_ai_memory()
         self.game.write_save()
         lesson = self.cfg["lessons"].get("clear")
         from .lesson import LessonState
@@ -299,6 +345,10 @@ class PlayingState(State):
 
     def _check_death(self):
         if not self.player.alive:
+            self._persist_ai_memory()       # it learns from your deaths too
+            self.camera.add_shake(14)
+            self.game.hitstop(0.16)
+            self._burst(self.player.x, self.player.y, C.RED, 30)
             from .game_over import GameOverState
             GameOverState(self.game, self.char, self.cfg, self.kills).enter()
 
@@ -351,6 +401,11 @@ class PlayingState(State):
             p.draw(surface, cam)
         for pa in self.particles:
             pa.draw(surface, cam)
+        for rx, ry, r, _mx, life, color in self.rings:
+            w = max(1, int(3 * life / 0.45))
+            pygame.draw.circle(surface, color,
+                               (int(rx - cam[0]), int(ry - cam[1])),
+                               int(r), w)
 
         self._draw_patch_prompt(surface, cam)
         self._draw_hud(surface)
@@ -397,7 +452,21 @@ class PlayingState(State):
         # dodge cooldown pip
         ready = p.dodge_cd <= 0
         draw_text(surface, "DODGE " + ("READY" if ready else "..."), 14,
-                  280, h - 38, color=C.GREEN if ready else C.GREY)
+                  280, h - 58, color=C.GREEN if ready else C.GREY)
+
+        # ability indicator (Q)
+        if p.ability_cd <= 0:
+            atxt = f"[Q] {p.ability_name}"
+            acol = C.PINK
+        else:
+            atxt = f"[Q] {p.ability_name}  {p.ability_cd:.0f}s"
+            acol = C.GREY
+        draw_text(surface, atxt, 14, 280, h - 38, color=acol)
+        # active buff badges
+        if p.shield_t > 0:
+            draw_text(surface, "SHIELD", 14, 280, h - 80, color=C.BLUE)
+        elif p.overdrive_t > 0:
+            draw_text(surface, "OVERDRIVE", 14, 280, h - 80, color=C.YELLOW)
 
         # objective / kills (top)
         if self.phase in ("intro", "patching"):
@@ -435,8 +504,8 @@ class PlayingState(State):
 
         # controls hint
         draw_text(surface,
-                  "WASD move | LMB/J melee | RMB/K shoot | SPACE dodge | "
-                  "E patch | ESC pause",
+                  "WASD move | LMB melee | RMB shoot | SPACE dodge | "
+                  "Q ability | E patch | ESC pause",
                   13, w // 2, h - 18, color=(70, 74, 92), center=True)
 
     def _draw_minimap(self, surface):

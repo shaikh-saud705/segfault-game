@@ -26,3 +26,6 @@ Thumbs.db
 
 # Reference images (local only)
 _ref/
+
+# Generated reference galleries (local only)
+*_gallery.png

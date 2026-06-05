@@ -24,8 +24,8 @@ ENEMY_TYPES = {
     # Chapter 4+: moves in random, unpredictable bursts
     "hallucination": {"hp": 30, "speed": 150, "dmg": 8, "sprite": "glitch",
                       "size": 42},
-    "heuristic":    {"hp": 220, "speed": 175, "dmg": 14, "sprite": "glitch",
-                     "size": 50},
+    "heuristic":    {"hp": 220, "speed": 175, "dmg": 14, "sprite": "boss",
+                     "size": 66},
 }
 
 

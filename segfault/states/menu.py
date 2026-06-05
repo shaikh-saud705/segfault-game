@@ -41,7 +41,11 @@ class MenuState(State):
 
     def _continue(self):
         from .character_select import CharacterSelectState
-        self.save["current_chapter"] = self.save["highest_chapter"]
+        from ..data.chapters import CHAPTERS
+        last_playable = max(c["id"] for c in CHAPTERS if c.get("playable"))
+        # clamp so beating the game doesn't point CONTINUE at a missing chapter
+        self.save["current_chapter"] = min(self.save["highest_chapter"],
+                                           last_playable)
         CharacterSelectState(self.game).enter()
 
     # ------------------------------------------------------------ events ----

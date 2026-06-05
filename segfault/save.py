@@ -16,6 +16,8 @@ DEFAULTS = {
     "master_volume": 0.5,
     "music_volume": 0.45,
     "music_on": True,
+    "equipped_weapon": "signature",
+    "ai_memory": {},
     "seen_intro": False,
 }
 

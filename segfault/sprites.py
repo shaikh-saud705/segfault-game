@@ -105,6 +105,83 @@ def hero(palette):
     return _finish(s)
 
 
+def hero_dev():
+    """The Dev: swept white hair, cyan glasses, purple bomber jacket, laptop."""
+    s = _surf(14, 18)
+    skin = (238, 205, 175)
+    hair = (236, 239, 246)
+    glass = (60, 220, 230)
+    jacket = (150, 90, 245)
+    jacket_d = (96, 56, 170)
+    shirt = (32, 32, 42)
+    pants = (30, 30, 42)
+    shoe = (236, 239, 246)
+    laptop = (60, 64, 78)
+    # legs
+    rrect(s, pants, 4, 13, 2, 3)
+    rrect(s, pants, 8, 13, 2, 3)
+    rrect(s, shoe, 3, 16, 3, 2)
+    rrect(s, shoe, 8, 16, 3, 2)
+    # jacket + shirt
+    rrect(s, jacket, 3, 8, 8, 6, 1)
+    rrect(s, jacket_d, 3, 8, 2, 6)
+    rrect(s, shirt, 6, 8, 2, 4)
+    # arms
+    rrect(s, jacket, 2, 8, 2, 4, 1)
+    rrect(s, jacket, 10, 8, 2, 4, 1)
+    # laptop held in front
+    rrect(s, laptop, 4, 10, 6, 3)
+    rrect(s, glass, 5, 11, 4, 1)
+    # head + hair
+    rrect(s, skin, 4, 3, 6, 5, 1)
+    rrect(s, hair, 3, 1, 8, 3, 1)
+    rrect(s, hair, 9, 2, 2, 2)
+    # glasses
+    pygame.draw.rect(s, glass, (4, 5, 2, 1))
+    pygame.draw.rect(s, glass, (8, 5, 2, 1))
+    pygame.draw.rect(s, (20, 20, 30), (6, 5, 2, 1))
+    return _finish(s)
+
+
+def hero_anime():
+    """Spiky-haired shonen hero: red headband, white gi, glowing energy blade."""
+    s = _surf(14, 18)
+    skin = (245, 210, 178)
+    hair = (28, 28, 38)
+    band = (212, 52, 52)
+    gi = (238, 238, 246)
+    gi_sh = (196, 62, 62)
+    pants = (30, 30, 40)
+    shoe = (200, 42, 42)
+    blade = (180, 240, 255)
+    hilt = (120, 90, 50)
+    # legs
+    rrect(s, pants, 4, 13, 2, 3)
+    rrect(s, pants, 8, 13, 2, 3)
+    rrect(s, shoe, 3, 16, 3, 2)
+    rrect(s, shoe, 8, 16, 3, 2)
+    # gi
+    rrect(s, gi, 3, 8, 8, 6, 1)
+    rrect(s, gi_sh, 3, 8, 2, 6)
+    rrect(s, band, 3, 11, 8, 1)               # belt
+    rrect(s, gi, 2, 8, 2, 4, 1)               # arms
+    rrect(s, gi, 10, 8, 2, 4, 1)
+    # head
+    rrect(s, skin, 4, 3, 6, 5, 1)
+    # spiky hair
+    rrect(s, hair, 3, 1, 8, 2)
+    for sx in (3, 5, 7, 9):
+        pygame.draw.rect(s, hair, (sx, 0, 1, 2))
+    rrect(s, band, 3, 3, 8, 1)                # headband
+    pygame.draw.rect(s, hair, (5, 5, 1, 1))   # eyes
+    pygame.draw.rect(s, hair, (8, 5, 1, 1))
+    # energy blade
+    pygame.draw.rect(s, hilt, (11, 11, 1, 2))
+    pygame.draw.line(s, blade, (12, 11), (13, 3), 1)
+    pygame.draw.line(s, (255, 255, 255), (12, 10), (13, 5), 1)
+    return _finish(s)
+
+
 def hero_shogun():
     """Anime samurai (Chapter 4 unlock): purple braided hair, white/lavender
     kimono, gold-knot obi, glowing katana. Bespoke pixel art."""
@@ -158,6 +235,149 @@ def hero_shogun():
     return _finish(s)
 
 
+def hero_ironman():
+    """Red/gold powered armour: gold faceplate, glowing eye slits, arc reactor."""
+    s = _surf(14, 18)
+    red = (198, 42, 42)
+    red_d = (150, 28, 28)
+    gold = (236, 192, 74)
+    gold_d = (196, 152, 52)
+    eye = (150, 235, 255)
+    # legs
+    rrect(s, red, 4, 13, 2, 4)
+    rrect(s, red, 8, 13, 2, 4)
+    rrect(s, gold_d, 4, 16, 2, 2)
+    rrect(s, gold_d, 8, 16, 2, 2)
+    # torso
+    rrect(s, red, 3, 8, 8, 6, 1)
+    rrect(s, red_d, 3, 8, 2, 6)
+    rrect(s, gold, 3, 8, 8, 1)               # collar trim
+    pygame.draw.line(s, gold_d, (5, 12), (8, 12), 1)
+    # arc reactor
+    pygame.draw.rect(s, (255, 255, 255), (6, 10, 2, 2))
+    pygame.draw.rect(s, eye, (6, 10, 1, 1))
+    # arms + gauntlets
+    rrect(s, red, 2, 8, 2, 4, 1)
+    rrect(s, red, 10, 8, 2, 4, 1)
+    rrect(s, gold, 2, 11, 2, 1)
+    rrect(s, gold, 10, 11, 2, 1)
+    pygame.draw.circle(s, eye, (11, 12), 1)  # repulsor glow
+    # helmet
+    rrect(s, red, 4, 1, 6, 6, 1)
+    rrect(s, gold, 5, 3, 4, 3)               # faceplate
+    pygame.draw.rect(s, red, (7, 3, 1, 2))   # nose ridge
+    pygame.draw.rect(s, eye, (5, 4, 1, 1))   # eye slits
+    pygame.draw.rect(s, eye, (8, 4, 1, 1))
+    return _finish(s)
+
+
+def hero_ultron():
+    """Silver android: angular head, red optic eyes, the cracked grin mouth."""
+    s = _surf(14, 18)
+    steel = (184, 190, 202)
+    steel_d = (120, 126, 140)
+    dark = (66, 70, 82)
+    eye = (250, 64, 64)
+    # legs
+    rrect(s, steel_d, 4, 13, 2, 4)
+    rrect(s, steel_d, 8, 13, 2, 4)
+    rrect(s, dark, 4, 16, 2, 2)
+    rrect(s, dark, 8, 16, 2, 2)
+    # torso
+    rrect(s, steel, 3, 8, 8, 6, 1)
+    rrect(s, steel_d, 3, 8, 2, 6)
+    pygame.draw.line(s, steel_d, (4, 10), (9, 10), 1)
+    pygame.draw.rect(s, eye, (6, 11, 2, 1))  # chest core
+    # arms
+    rrect(s, steel, 2, 8, 2, 4, 1)
+    rrect(s, steel, 10, 8, 2, 4, 1)
+    # head
+    rrect(s, steel, 4, 2, 6, 5, 1)
+    rrect(s, steel_d, 4, 6, 6, 1)            # jaw line
+    pygame.draw.rect(s, eye, (5, 4, 1, 2))   # glowing eyes
+    pygame.draw.rect(s, eye, (8, 4, 1, 2))
+    for mx in (5, 6, 7, 8):                   # the grin slits
+        pygame.draw.rect(s, dark, (mx, 6, 1, 1))
+    pygame.draw.rect(s, steel, (4, 1, 1, 1))  # head crests
+    pygame.draw.rect(s, steel, (9, 1, 1, 1))
+    return _finish(s)
+
+
+def hero_bumblebee():
+    """Yellow Autobot scout: black accents, blue optic visor, head crests."""
+    s = _surf(14, 18)
+    yellow = (245, 202, 52)
+    yellow_d = (200, 160, 40)
+    black = (40, 40, 48)
+    blue = (120, 205, 255)
+    steel = (150, 156, 168)
+    # legs
+    rrect(s, black, 4, 13, 2, 4)
+    rrect(s, black, 8, 13, 2, 4)
+    rrect(s, yellow, 4, 16, 2, 2)
+    rrect(s, yellow, 8, 16, 2, 2)
+    # torso: yellow with black side panels
+    rrect(s, yellow, 3, 8, 8, 6, 1)
+    rrect(s, black, 3, 8, 2, 6)
+    rrect(s, black, 9, 8, 2, 6)
+    pygame.draw.rect(s, steel, (6, 10, 2, 2))   # chest core
+    pygame.draw.line(s, yellow_d, (5, 9), (8, 9), 1)
+    # arms (one yellow, one black/cannon)
+    rrect(s, yellow, 2, 8, 2, 4, 1)
+    rrect(s, black, 10, 8, 2, 4, 1)
+    # head
+    rrect(s, yellow, 4, 2, 6, 5, 1)
+    rrect(s, black, 4, 2, 6, 1)                 # top strip
+    rrect(s, blue, 5, 4, 4, 1)                  # blue visor
+    pygame.draw.rect(s, yellow_d, (4, 5, 1, 1))
+    pygame.draw.rect(s, yellow_d, (9, 5, 1, 1))
+    pygame.draw.rect(s, steel, (4, 1, 1, 1))    # antennae
+    pygame.draw.rect(s, steel, (9, 1, 1, 1))
+    return _finish(s)
+
+
+def hero_baymax():
+    """Big soft white healthcare robot: round body + head, two dot eyes."""
+    s = _surf(14, 18)
+    white = (238, 238, 244)
+    shade = (198, 200, 210)
+    eye = (28, 28, 36)
+    pygame.draw.ellipse(s, white, (1, 6, 12, 11))      # body
+    pygame.draw.ellipse(s, shade, (1, 11, 12, 6))       # belly shade
+    pygame.draw.ellipse(s, white, (3, 0, 8, 7))         # head
+    pygame.draw.rect(s, eye, (5, 3, 1, 2))
+    pygame.draw.rect(s, eye, (8, 3, 1, 2))
+    pygame.draw.line(s, eye, (6, 3), (8, 3), 1)         # connecting line
+    rrect(s, white, 0, 8, 2, 5, 1)                      # arms
+    rrect(s, white, 12, 8, 2, 5, 1)
+    rrect(s, white, 4, 16, 2, 2)                        # feet
+    rrect(s, white, 8, 16, 2, 2)
+    return _finish(s)
+
+
+def hero_walle():
+    """Boxy trash-compactor robot: binocular eyes, treads."""
+    s = _surf(14, 18)
+    body = (200, 150, 70)
+    dark = (120, 86, 40)
+    metal = (150, 156, 168)
+    eye = (38, 40, 50)
+    lens = (120, 205, 235)
+    rrect(s, dark, 2, 13, 10, 5, 1)                     # tread base
+    rrect(s, (60, 56, 50), 2, 16, 10, 2)
+    rrect(s, body, 3, 8, 8, 6, 1)                       # body box
+    rrect(s, dark, 3, 8, 2, 6)
+    rrect(s, metal, 6, 5, 2, 3)                         # neck
+    rrect(s, metal, 2, 2, 10, 4, 2)                     # head bar
+    pygame.draw.circle(s, eye, (5, 4), 2)               # binocular eyes
+    pygame.draw.circle(s, eye, (9, 4), 2)
+    pygame.draw.rect(s, lens, (5, 4, 1, 1))
+    pygame.draw.rect(s, lens, (9, 4, 1, 1))
+    rrect(s, metal, 1, 9, 2, 3, 1)                      # arms
+    rrect(s, metal, 11, 9, 2, 3, 1)
+    return _finish(s)
+
+
 # ----------------------------------------------------------------- enemies ----
 def enemy_bug(body, eye=(245, 210, 70)):
     """Chunky cyber-bug blob with glowing eyes and little legs."""
@@ -179,31 +399,85 @@ def enemy_bug(body, eye=(245, 210, 70)):
     return _finish(s)
 
 
-def enemy_spider(body=(245, 150, 60)):
-    s = _surf(14, 12)
-    dark = tuple(max(0, c - 60) for c in body)
-    # 6 legs
-    for i, ly in enumerate((4, 6, 8)):
-        pygame.draw.line(s, dark, (5, ly + 1), (0, ly), 1)
-        pygame.draw.line(s, dark, (8, ly + 1), (13, ly), 1)
-    pygame.draw.ellipse(s, body, (3, 3, 8, 7))
-    pygame.draw.rect(s, (245, 64, 72), (6, 5, 2, 2))   # single red eye
+def enemy_zombie(flesh=(112, 142, 96), eye=(250, 210, 70)):
+    """Cyborg zombie: hunched humanoid, glowing eyes, an exposed metal arm and
+    head plate, tattered clothes."""
+    s = _surf(14, 16)
+    flesh_d = tuple(max(0, c - 30) for c in flesh)
+    metal = (152, 158, 170)
+    metal_d = (96, 100, 112)
+    cloth = (66, 70, 80)
+    dark = (40, 44, 48)
+    # legs
+    rrect(s, cloth, 4, 12, 2, 4)
+    rrect(s, cloth, 8, 12, 2, 4)
+    rrect(s, dark, 4, 15, 2, 1)
+    rrect(s, dark, 8, 15, 2, 1)
+    # torso (tattered cloth, one exposed side)
+    rrect(s, cloth, 4, 7, 6, 6, 1)
+    rrect(s, flesh_d, 4, 7, 2, 5)
+    pygame.draw.rect(s, metal_d, (5, 9, 1, 3))       # exposed ribs
+    # flesh arm (left) + mechanical claw arm (right)
+    rrect(s, flesh, 2, 8, 2, 3, 1)
+    rrect(s, metal, 10, 8, 3, 2, 1)
+    rrect(s, metal, 12, 7, 1, 4)                      # claw
+    rrect(s, metal_d, 10, 8, 1, 2)
+    # head
+    rrect(s, flesh, 4, 2, 6, 5, 1)
+    rrect(s, metal, 4, 2, 2, 4)                       # bolted head plate
+    pygame.draw.rect(s, metal_d, (5, 3, 1, 1))
+    # glowing eyes + grimace
+    pygame.draw.rect(s, eye, (6, 4, 1, 1))
+    pygame.draw.rect(s, eye, (8, 4, 1, 1))
+    pygame.draw.rect(s, dark, (6, 6, 3, 1))
     return _finish(s)
 
 
-def enemy_tank(body=(70, 130, 240)):
+def enemy_spider(eye=(250, 70, 70)):
+    """Cyborg spider: metallic body, single glowing optic, sharp angular legs."""
+    s = _surf(16, 12)
+    body = (96, 102, 118)
+    body_d = (60, 64, 78)
+    metal = (158, 164, 176)
+    # 6 angular mechanical legs
+    for ly in (3, 5, 7):
+        pygame.draw.line(s, metal, (5, ly + 2), (0, ly), 1)
+        pygame.draw.line(s, metal, (10, ly + 2), (15, ly), 1)
+        pygame.draw.rect(s, body_d, (5, ly + 2, 1, 1))
+        pygame.draw.rect(s, body_d, (10, ly + 2, 1, 1))
+    # metallic carapace
+    pygame.draw.ellipse(s, body, (4, 2, 8, 8))
+    pygame.draw.ellipse(s, body_d, (4, 6, 8, 4))
+    pygame.draw.line(s, metal, (6, 4), (9, 4), 1)        # plating seam
+    # single glowing optic
+    pygame.draw.rect(s, eye, (7, 5, 2, 2))
+    pygame.draw.rect(s, (255, 210, 210), (7, 5, 1, 1))
+    return _finish(s)
+
+
+def enemy_tank(eye=(250, 100, 64)):
+    """Cyborg heavy mech: armoured chassis, shoulder plates, glowing core,
+    tread base."""
     s = _surf(16, 16)
-    dark = tuple(max(0, c - 60) for c in body)
-    rrect(s, dark, 2, 4, 12, 11, 2)
-    rrect(s, body, 3, 3, 10, 9, 2)
-    # plating lines
-    pygame.draw.line(s, dark, (3, 7), (12, 7), 1)
-    pygame.draw.line(s, dark, (8, 3), (8, 14), 1)
-    # eyes
-    pygame.draw.rect(s, (245, 210, 70), (4, 5, 2, 2))
-    pygame.draw.rect(s, (245, 210, 70), (10, 5, 2, 2))
-    # treads
-    rrect(s, (40, 42, 55), 2, 14, 12, 2)
+    armor = (92, 102, 122)
+    armor_d = (60, 68, 86)
+    metal = (156, 162, 176)
+    dark = (38, 42, 54)
+    # tread base
+    rrect(s, dark, 1, 12, 14, 4, 1)
+    rrect(s, (28, 30, 40), 1, 14, 14, 2)
+    for tx in range(2, 14, 3):
+        pygame.draw.rect(s, (60, 64, 80), (tx, 13, 1, 2))
+    # chassis
+    rrect(s, armor, 2, 3, 12, 10, 2)
+    rrect(s, armor_d, 2, 8, 12, 5)
+    pygame.draw.line(s, dark, (2, 6), (13, 6), 1)
+    # heavy shoulder plates
+    rrect(s, metal, 0, 3, 3, 5, 1)
+    rrect(s, metal, 13, 3, 3, 5, 1)
+    # glowing central core
+    pygame.draw.rect(s, eye, (6, 6, 4, 3))
+    pygame.draw.rect(s, (255, 220, 200), (7, 6, 1, 1))
     return _finish(s)
 
 
@@ -320,24 +594,18 @@ class SpriteBank:
         self._build()
 
     def _build(self):
-        self.heroes["dev"] = hero({
-            "skin": (235, 200, 170), "hair": (235, 238, 245),
-            "coat": (150, 90, 245), "coat_dark": (96, 56, 170),
-            "pants": (30, 30, 42), "shoe": (235, 238, 245),
-            "glasses": (60, 220, 230), "weapon": "laptop",
-            "screen": (60, 220, 230),
-        })
-        self.heroes["anime"] = hero({
-            "skin": (240, 205, 175), "hair": (28, 28, 36),
-            "coat": (240, 240, 245), "coat_dark": (180, 60, 60),
-            "pants": (24, 24, 32), "shoe": (200, 40, 40),
-            "weapon": "sword",
-        })
+        self.heroes["dev"] = hero_dev()
+        self.heroes["anime"] = hero_anime()
         self.heroes["shogun"] = hero_shogun()
+        self.heroes["ironman"] = hero_ironman()
+        self.heroes["ultron"] = hero_ultron()
+        self.heroes["bumblebee"] = hero_bumblebee()
+        self.heroes["baymax"] = hero_baymax()
+        self.heroes["walle"] = hero_walle()
 
-        self.enemies["null_pointer"] = enemy_bug((70, 220, 120))   # green bug
-        self.enemies["spider"] = enemy_spider((245, 150, 60))
-        self.enemies["tank"] = enemy_tank((70, 130, 240))
+        self.enemies["null_pointer"] = enemy_zombie()             # cyborg zombie
+        self.enemies["spider"] = enemy_spider()                   # cyborg spider
+        self.enemies["tank"] = enemy_tank()                       # cyborg mech
         self.enemies["packet_sniffer"] = enemy_bug((60, 220, 230),
                                                    eye=(245, 90, 200))  # cyan
         self.enemies["dns_spoofer"] = enemy_bug((235, 80, 90),
