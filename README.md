@@ -1,5 +1,9 @@
 # SEGFAULT
 
+<p align="center">
+  <img src="poster.png" width="420" alt="Segfault — game poster">
+</p>
+
 A dev-themed top-down pixel beat-'em-up with an **adaptive offline AI**.
 
 You pushed a hotfix to prod at 2am. Reality threw an exception. Now you can
