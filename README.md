@@ -11,14 +11,6 @@ rushes you down; dodge constantly and it baits the dodge then punishes. If you
 have a local [Ollama](https://ollama.com) model running it'll also use the LLM
 as a slow strategist, but it works fully without one.
 
-```
-┌───────────────────────────────────────────────────────────┐
-│  AI[OFFLINE-LEARN] :: rush                                 │
-│  learned: ranged 0.5  dodgy 0.11  dist 550.2              │
-│                          ◆  "found your pattern"          │
-└───────────────────────────────────────────────────────────┘
-```
-
 Everything you see — every sprite, every sound — is **generated in code**.
 No art files, no audio files, no downloads. It just runs.
 
