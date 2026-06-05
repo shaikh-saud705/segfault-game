@@ -1,5 +1,7 @@
 # SEGFAULT
 
+![Segfault title screen](segfault/assets/title.png)
+
 A dev-themed top-down pixel beat-'em-up with an **adaptive offline AI**.
 
 You pushed a hotfix to prod at 2am. Reality threw an exception. Now you can
