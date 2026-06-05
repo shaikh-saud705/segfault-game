@@ -1,7 +1,7 @@
 # SEGFAULT
 
 <p align="center">
-  <img src="poster.png" width="420" alt="Segfault — game poster">
+  <img src="docs/poster.png" width="420" alt="Segfault — game poster">
 </p>
 
 A dev-themed top-down pixel beat-'em-up with an **adaptive offline AI**.
@@ -86,19 +86,24 @@ Want it provably offline? Run with `SEGFAULT_NO_LLM=1` and watch it still adapt.
 
 ```
 run.py                  launcher (bootstraps the venv)
+requirements.txt        just pygame-ce
+README.md / RESUME.md   docs + "where we left off" status
+docs/                   poster + screenshots
+tests/                  headless smoke test
 segfault/
   main.py               Game shell + state stack + main loop
   constants.py          all tunables
+  pixelfont.py          in-code pixel bitmap font
   sprites.py            procedural pixel-art (heroes, enemies, tiles)
-  sound.py              procedural SFX (stdlib synth -> pygame.mixer)
+  sound.py              procedural SFX + music (stdlib synth -> mixer)
   save.py               JSON save in ~/.segfault
   utils.py / ui.py      math, fonts, menu eye-candy
   ai/brain.py           PlayerProfile + AdaptiveBrain + Ollama strategist
   entities/             player, enemy, projectile
-  world/                level (Chapter 1) + deadzone camera
-  states/               menu, character_select, playing, lesson, pause,
-                        game_over, victory
-  data/                 characters + chapter/lesson definitions
+  world/                level + deadzone camera (with screen shake)
+  states/               menu, character_select, weapon_select, playing,
+                        lesson, pause, game_over, victory, options
+  data/                 characters, chapters/lessons, weapons
 ```
 
 ## Notes / credits

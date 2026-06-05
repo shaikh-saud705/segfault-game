@@ -6,7 +6,8 @@ import sys
 os.environ["SDL_VIDEODRIVER"] = "dummy"
 os.environ["SDL_AUDIODRIVER"] = "dummy"
 os.environ["SEGFAULT_NO_LLM"] = "1"   # keep smoke test offline/deterministic
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# repo root is one level up from tests/
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import pygame
 from segfault.main import Game
